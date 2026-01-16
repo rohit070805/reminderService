@@ -18,6 +18,16 @@ class TicketRepository{
             throw error;
         }
     }
+    async update(ticketId,data){
+        try {
+            const updatedTicket = await NotificationTicket.findByPk(ticketId);
+            updatedTicket.status = data.status;
+            updatedTicket.save();
+            return updatedTicket;
+        } catch (error) {
+            throw error;
+        }
+    }
     async get(filter){
             try {
                 const tickets = await NotificationTicket.findAll({
