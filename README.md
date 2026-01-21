@@ -13,6 +13,8 @@ In RabbitMQ, you never send messages directly to a Queue. You send them to an Ex
 
 The 'direct' type means: "Only route a message to a Queue if the message's Routing Key exactly matches the Queue's Binding Key."
 
+- ye wala function hum ek channel(with exchange defined that will communicate with the queue) lene k liye kr rhe hai jis channel ka use hm niche wali functions me krenge to publish or subscribe.
+
 2. subscribeMessage: Setting up the Storage
 This function sets up the Queue and the Consumer (the code that processes the data).
 
