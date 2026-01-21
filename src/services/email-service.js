@@ -23,7 +23,7 @@ const updateTicket = async(ticketId,data)=>{
           console.log(error);
     }
 }
-const fetchPendingEmails=async(timeStamp)=>{
+const fetchPendingEmails=async()=>{
     try {
        
         const response = await repo.get({status:"PENDING"});
