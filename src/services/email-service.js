@@ -1,13 +1,14 @@
 const sender = require('../config/emailConfig');
 const TicketRepository = require('../repository/ticket-repository');
  const repo = new TicketRepository();
-const sendBasicEmail =async (mailFrom,mailTo,mailSubject,mailBody)=>{
+const sendBasicEmail =async (data)=>{
+    
     try {
          const response = await sender.sendMail({
-        from:mailFrom,
-        to:mailTo,
-        subject:mailSubject,
-        text:mailBody
+        from:data.mailFrom,
+        to:data.mailTo,
+        subject:data.mailSubject,
+        text:data.mailBody
     });
     console.log(response);
     } catch (error) {
@@ -42,13 +43,24 @@ const createNotification=async(data)=>{
         throw error;
     }
 }
-const testingQueue = async(data)=>{
-console.log("inside service layer",data);
+const subscrbieEvents = async(payload)=>{
+    let service = payload.service;
+    let data = payload.data;
+    switch(service){
+        case 'CREATE_TICKET':
+            await createNotification(data);
+            break;
+        case 'SEND_BASIC_MAIL':
+            await sendBasicEmail(data);
+            break;
+        default:
+            console('No valid service');
+    }
 }
 module.exports = {
     sendBasicEmail,
     fetchPendingEmails,
     createNotification,
     updateTicket,
-    testingQueue
+    subscrbieEvents
 }

@@ -15,15 +15,12 @@ const subscribeMessage = async (channel,service,binding_key)=>{
    try {
      const applicationQueue = await channel.assertQueue('REMINDER_QUEUE');
     channel.bindQueue(applicationQueue.queue,EXCHANGE_NAME,binding_key);
-    console.log("hii");
+    
     channel.consume(applicationQueue.queue,msg=>{
         console.log("Received data");
         console.log(msg.content.toString());
         const dataPayload = JSON.parse(msg.content.toString());
-        if(dataPayload.service =="DEMO_SERVICE"){
-            console.log("calling demo service");
-            service.testingQueue(dataPayload)
-        }
+        service(dataPayload);
         channel.ack(msg);
     });
    } catch (error) {

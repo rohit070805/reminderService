@@ -1,23 +1,24 @@
 const cron = require('node-cron');
-const sender = require('../config/emailConfig');
+const {REMINDER_BINDING_KEY} = require('../config/serverConfig');
 const emailService = require('../services/email-service');
-const setupJobs = ()=>{
+const {publishMessage} = require('./messageQueue');
+const setupJobs = (channel)=>{
     cron.schedule('*/2 * * * *',async()=>{
         
         const response = await emailService.fetchPendingEmails();
         response.forEach((email) => {
-        sender.sendMail({
-            to:email.recepientEmail,
-            subject:email.subject,
-            text:email.content
-        },async(err,data)=>{
-                if(err) {
-                    console.log(err);
-                }else{
-                    console.log(data);
-                    await emailService.updateTicket(email.id,{status:"SUCCESS"});
-                }
-         });
+            const ticketPayload={
+            data:{
+                mailFrom:"airlineHelpline@gamil.com",
+                mailTo:email.recepientEmail,
+                mailSubject:email.subject,
+                mailBody:email.content
+            },
+            service:'SEND_BASIC_MAIL',
+           };
+            publishMessage(channel,REMINDER_BINDING_KEY,JSON.stringify(ticketPayload));
+           
+        
            
           
         });
