@@ -11,13 +11,19 @@ const createChannel = async()=>{
         throw error;
     }
 }
-const subscribeMessage = async (channel,ServiceWorker,binding_key)=>{
+const subscribeMessage = async (channel,service,binding_key)=>{
    try {
-     const applicationQueue = await channel.assertQueue('QUEUE_NAME');
+     const applicationQueue = await channel.assertQueue('REMINDER_QUEUE');
     channel.bindQueue(applicationQueue.queue,EXCHANGE_NAME,binding_key);
+    console.log("hii");
     channel.consume(applicationQueue.queue,msg=>{
         console.log("Received data");
         console.log(msg.content.toString());
+        const dataPayload = JSON.parse(msg.content.toString());
+        if(dataPayload.service =="DEMO_SERVICE"){
+            console.log("calling demo service");
+            service.testingQueue(dataPayload)
+        }
         channel.ack(msg);
     });
    } catch (error) {
@@ -26,7 +32,8 @@ throw error;
 }
 const publishMessage = async(channel,binding_key,message)=>{
     try {
-        await channel.assetQueue('QUEUE_NAME');
+         const applicationQueue = await channel.assertQueue('REMINDER_QUEUE');
+    channel.bindQueue(applicationQueue.queue,EXCHANGE_NAME,binding_key);
         await channel.publish(EXCHANGE_NAME,binding_key,Buffer.from(message));
     } catch (error) {
         throw error
@@ -34,5 +41,6 @@ const publishMessage = async(channel,binding_key,message)=>{
 }
 module.exports={
     subscribeMessage,
-    createChannel
+    createChannel,
+    publishMessage
 }
