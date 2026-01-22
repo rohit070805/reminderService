@@ -6,7 +6,7 @@ const setupJobs = (channel)=>{
     cron.schedule('*/2 * * * *',async()=>{
         
         const response = await emailService.fetchPendingEmails();
-        response.forEach((email) => {
+        response.forEach(async(email) => {
             const ticketPayload={
             data:{
                 mailFrom:"airlineHelpline@gamil.com",
@@ -17,7 +17,7 @@ const setupJobs = (channel)=>{
             service:'SEND_BASIC_MAIL',
            };
             publishMessage(channel,REMINDER_BINDING_KEY,JSON.stringify(ticketPayload));
-           
+           await emailService.updateTicket(email.id,{status:"SUCCESS"});
         
            
           
