@@ -10,7 +10,7 @@ const EmailService = require('./services/email-service');
 const setupAndStartServer =async ()=>{
     const app = express();
     app.use(bodyParser.json());
-    app.post('/api/v1/tickets',TicketController.create)
+   // app.post('/api/v1/tickets',TicketController.create)
     app.use(bodyParser.urlencoded({extended:true}));
    
     const channel = await createChannel();
